@@ -1,7 +1,5 @@
 # Video Editor
-
-![image](./logo.jpg =200x200)
-
+<img src="logo.jpg" alt="drawing" width="200"/>
 
 An Android native video editor application
 
