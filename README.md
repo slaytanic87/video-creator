@@ -1,4 +1,8 @@
 # Video Editor
+
+![image](./logo.jpg)
+
+
 An Android Native Video Editor Application
 
 ## Features
