@@ -99,8 +99,7 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
                 brightness = 0f,
                 contrast = 1f,
                 saturation = 1f,
-                selectedFilter = VideoFilter.NONE,
-                outputUri = it.sourceUri
+                selectedFilter = VideoFilter.NONE
             )
         }
     }
