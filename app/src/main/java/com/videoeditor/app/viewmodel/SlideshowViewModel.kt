@@ -39,11 +39,11 @@ class SlideshowViewModel(application: Application) : AndroidViewModel(applicatio
     val creationSuccess: StateFlow<Boolean?> = _creationSuccess.asStateFlow()
 
     fun addImages(uris: List<Uri>) {
-        _images.value = _images.value + uris.map { SlideshowImage(uri = it) }
+        _images.value += uris.map { SlideshowImage(uri = it) }
     }
 
     fun removeImage(index: Int) {
-        val current = _images.value.toMutableList()
+        val current: MutableList<SlideshowImage> = _images.value.toMutableList()
         if (index in current.indices) {
             current.removeAt(index)
             _images.value = current
@@ -61,8 +61,8 @@ class SlideshowViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun setEffectForSelected(effect: SlideshowEffect) {
-        val idx = _selectedIndex.value
-        val current = _images.value.toMutableList()
+        val idx: Int = _selectedIndex.value
+        val current: MutableList<SlideshowImage> = _images.value.toMutableList()
         if (idx in current.indices) {
             current[idx] = current[idx].copy(effect = effect)
             _images.value = current
@@ -70,8 +70,8 @@ class SlideshowViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun setFilterForSelected(filter: SlideshowFilter) {
-        val idx = _selectedIndex.value
-        val current = _images.value.toMutableList()
+        val idx: Int = _selectedIndex.value
+        val current: MutableList<SlideshowImage> = _images.value.toMutableList()
         if (idx in current.indices) {
             current[idx] = current[idx].copy(filter = filter)
             _images.value = current
@@ -91,7 +91,7 @@ class SlideshowViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun createVideo() {
-        val imageList = _images.value
+        val imageList: List<SlideshowImage> = _images.value
         if (imageList.isEmpty()) return
 
         viewModelScope.launch {

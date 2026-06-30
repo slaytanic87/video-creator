@@ -124,8 +124,7 @@ class ImageToVideoConverter(private val context: Context) {
                                 applyKenBurns(this, progress, direction)
                             }
 
-                            else -> { /* no transform */
-                            }
+                            else -> {}
                         }
 
                         drawBitmapCentered(this, bitmap, filterPaint)
@@ -158,8 +157,7 @@ class ImageToVideoConverter(private val context: Context) {
                             }
                         }
 
-                        else -> { /* no fade */
-                        }
+                        else -> {}
                     }
 
                     inputSurface.unlockCanvasAndPost(canvas)

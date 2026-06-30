@@ -28,9 +28,6 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _exportProgress = MutableStateFlow(0f)
-    val exportProgress: StateFlow<Float> = _exportProgress.asStateFlow()
-
     private val _isExporting = MutableStateFlow(false)
     val isExporting: StateFlow<Boolean> = _isExporting.asStateFlow()
 
@@ -110,7 +107,6 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
 
         viewModelScope.launch {
             _isExporting.value = true
-            _exportProgress.value = 0f
             _exportSuccess.value = null
 
             try {
@@ -121,7 +117,6 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
                     brightness = currentProject.brightness,
                     contrast = currentProject.contrast,
                     filter = currentProject.selectedFilter,
-                    onProgress = { progress -> _exportProgress.value = progress }
                 )
                 _project.update { it.copy(outputUri = outputUri) }
                 _exportSuccess.value = true
@@ -140,7 +135,6 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
 
         viewModelScope.launch {
             _isExporting.value = true
-            _exportProgress.value = 0f
             _exportSuccess.value = null
 
             try {
@@ -151,7 +145,6 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
                     brightness = currentProject.brightness,
                     contrast = currentProject.contrast,
                     filter = currentProject.selectedFilter,
-                    onProgress = { progress -> _exportProgress.value = progress }
                 )
                 _project.update { it.copy(outputUri = outputUri) }
                 _exportSuccess.value = true

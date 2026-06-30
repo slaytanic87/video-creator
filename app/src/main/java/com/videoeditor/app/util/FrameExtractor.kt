@@ -15,17 +15,15 @@ class FrameExtractor(private val context: Context) {
         val frames = mutableListOf<Bitmap>()
         try {
             retriever.setDataSource(context, uri)
-            val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            val duration = durationStr?.toLongOrNull() ?: return@withContext emptyList()
-            val interval = duration * 1000 / count
+            val durationStr: String? = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            val duration: Long = durationStr?.toLongOrNull() ?: return@withContext emptyList()
+            val interval: Long = duration * 1000 / count
 
-            for (i in 0 until count) {
-                val timeUs = i * interval
-                val frame = retriever.getFrameAtTime(timeUs, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
-                if (frame != null) {
-                    frames.add(
-                        frame.scale(160, 90)
-                    )
+            for (index in 0 until count) {
+                val timeUs: Long = index * interval
+                val frame: Bitmap? = retriever.getFrameAtTime(timeUs, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                frame?.let {
+                    frames.add(it.scale(160, 90))
                 }
             }
         } catch (e: Exception) {

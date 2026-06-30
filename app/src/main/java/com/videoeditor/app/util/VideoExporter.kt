@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.media3.common.Effect
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.effect.Contrast
@@ -33,7 +34,6 @@ class VideoExporter(private val context: Context) {
         brightness: Float,
         contrast: Float,
         filter: VideoFilter,
-        onProgress: (Float) -> Unit
     ): Uri = withContext(Dispatchers.Main) {
         val outputTmpFile = File(context.cacheDir, "edited_tmp_${System.currentTimeMillis()}.mp4")
         val clippingConfig = MediaItem.ClippingConfiguration.Builder()
@@ -46,7 +46,8 @@ class VideoExporter(private val context: Context) {
             .setClippingConfiguration(clippingConfig)
             .build()
 
-        val videoEffects = buildVideoEffects(brightness, contrast, filter)
+        val videoEffects: List<Effect>
+        = buildVideoEffects(brightness, contrast, filter)
 
         val effects = Effects(
             /* audioProcessors= */ emptyList(),
@@ -90,7 +91,6 @@ class VideoExporter(private val context: Context) {
         brightness: Float,
         contrast: Float,
         filter: VideoFilter,
-        onProgress: (Float) -> Unit
     ): Uri = withContext(Dispatchers.Main) {
         val outputFile: File = createOutputFile()
 
@@ -147,8 +147,8 @@ class VideoExporter(private val context: Context) {
         brightness: Float,
         contrast: Float,
         filter: VideoFilter
-    ): List<androidx.media3.common.Effect> {
-        val effects = mutableListOf<androidx.media3.common.Effect>()
+    ): List<Effect> {
+        val effects = mutableListOf<Effect>()
 
         if (contrast != 1f) {
             effects.add(Contrast(contrast - 1f))
