@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import androidx.media3.common.Effect
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.effect.Brightness
 import androidx.media3.effect.Contrast
 import androidx.media3.effect.RgbFilter
 import androidx.media3.transformer.Composition
@@ -152,6 +153,10 @@ class VideoExporter(private val context: Context) {
 
         if (contrast != 1f) {
             effects.add(Contrast(contrast - 1f))
+        }
+
+        if (brightness != 0f) {
+            effects.add(Brightness(brightness - 1f))
         }
 
         when (filter) {
