@@ -15,5 +15,6 @@ enum class SlideshowFilter(val displayName: String) {
     NONE("None"),
     CONTRAST("Contrast"),
     SEPIA("Sepia"),
-    WARM("Warm Color")
+    WARM("Warm Color"),
+    GRAYSCALE("Grayscale"),
 }

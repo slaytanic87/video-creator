@@ -46,12 +46,12 @@ class ImageToVideoConverter(private val context: Context) {
         audioUri: Uri? = null,
         onProgress: (Float) -> Unit
     ): Uri = withContext(Dispatchers.Default) {
-        val outputFile = createOutputFile()
+        val outputFile: File = createOutputFile()
 
         // Calculate total frames accounting for per-image slow motion
-        val baseFramesPerImage = (durationPerImageMs * FRAME_RATE / 1000).toInt()
-        val totalFrames = images.sumOf { img ->
-            val factor = if (img.effect == SlideshowEffect.SLOW_MOTION) 2 else 1
+        val baseFramesPerImage: Int = (durationPerImageMs * FRAME_RATE / 1000).toInt()
+        val totalFrames: Int = images.sumOf { img ->
+            val factor: Int = if (img.effect == SlideshowEffect.SLOW_MOTION) 2 else 1
             baseFramesPerImage * factor
         }
 
@@ -531,7 +531,7 @@ class ImageToVideoConverter(private val context: Context) {
         BitmapFactory.decodeStream(inputStream, null, options)
         inputStream.close()
 
-        val sampleSize =
+        val sampleSize: Int =
             calculateInSampleSize(options.outWidth, options.outHeight, VIDEO_WIDTH, VIDEO_HEIGHT)
 
         val decodeOptions = BitmapFactory.Options().apply { inSampleSize = sampleSize }
@@ -628,6 +628,10 @@ class ImageToVideoConverter(private val context: Context) {
                     0f, 0f, 0f, 1f, 0f
                 )
             )
+
+            SlideshowFilter.GRAYSCALE -> ColorMatrix().apply {
+                setSaturation(0f)
+            }
 
             SlideshowFilter.NONE -> null
         }
