@@ -101,7 +101,7 @@ fun PreviewScreen(
                 .padding(padding)
         ) {
             // Video preview player
-            project.sourceUri?.let { uri ->
+            project.outputUri?.let { uri ->
                 VideoPlayerView(
                     uri = uri,
                     startPositionMs = project.trimStartMs,

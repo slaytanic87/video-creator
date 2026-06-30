@@ -52,7 +52,8 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
                     sourceUri = uri,
                     durationMs = duration,
                     trimStartMs = 0L,
-                    trimEndMs = duration
+                    trimEndMs = duration,
+                    outputUri = uri
                 )
             }
             val frames = frameExtractor.extractFrames(uri, 15)
@@ -98,14 +99,15 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
                 brightness = 0f,
                 contrast = 1f,
                 saturation = 1f,
-                selectedFilter = VideoFilter.NONE
+                selectedFilter = VideoFilter.NONE,
+                outputUri = it.sourceUri
             )
         }
     }
 
     fun exportPreview() {
-        val currentProject = _project.value
-        val sourceUri = currentProject.sourceUri ?: return
+        val currentProject: VideoProject = _project.value
+        val sourceUri: Uri = currentProject.sourceUri ?: return
 
         viewModelScope.launch {
             _isExporting.value = true
@@ -113,7 +115,7 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
             _exportSuccess.value = null
 
             try {
-                val outputUri = videoExporter.exportPreview(
+                val outputUri: Uri = videoExporter.exportPreview(
                     sourceUri = sourceUri,
                     trimStartMs = currentProject.trimStartMs,
                     trimEndMs = currentProject.trimEndMs,
@@ -122,7 +124,7 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
                     filter = currentProject.selectedFilter,
                     onProgress = { progress -> _exportProgress.value = progress }
                 )
-                _project.update { it.copy(sourceUri = outputUri) }
+                _project.update { it.copy(outputUri = outputUri) }
                 _exportSuccess.value = true
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -134,8 +136,8 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun exportVideo() {
-        val currentProject = _project.value
-        val sourceUri = currentProject.sourceUri ?: return
+        val currentProject: VideoProject = _project.value
+        val sourceUri: Uri = currentProject.sourceUri ?: return
 
         viewModelScope.launch {
             _isExporting.value = true
@@ -143,7 +145,7 @@ class VideoEditorViewModel(application: Application) : AndroidViewModel(applicat
             _exportSuccess.value = null
 
             try {
-                val outputUri = videoExporter.exportVideo(
+                val outputUri: Uri = videoExporter.exportVideo(
                     sourceUri = sourceUri,
                     trimStartMs = currentProject.trimStartMs,
                     trimEndMs = currentProject.trimEndMs,

@@ -274,7 +274,7 @@ private fun applyAdjustments(
     contrast: Float,
     saturation: Float
 ): Bitmap {
-    val output = source.copy(Bitmap.Config.ARGB_8888, true)
+    val output: Bitmap = source.copy(Bitmap.Config.ARGB_8888, true)
     val canvas = android.graphics.Canvas(output)
     val paint = android.graphics.Paint()
 

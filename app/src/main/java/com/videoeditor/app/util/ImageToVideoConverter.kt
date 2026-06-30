@@ -201,7 +201,7 @@ class ImageToVideoConverter(private val context: Context) {
                 val factor = if (img.effect == SlideshowEffect.SLOW_MOTION) 2L else 1L
                 durationPerImageMs * factor
             }
-            val muxedFile = muxAudioIntoVideo(outputFile, audioUri, actualDurationMs)
+            val muxedFile: File = muxAudioIntoVideo(outputFile, audioUri, actualDurationMs)
             outputFile.delete()
             muxedFile
         } else {
@@ -219,10 +219,10 @@ class ImageToVideoConverter(private val context: Context) {
         // Add video track
         val videoExtractor = MediaExtractor()
         videoExtractor.setDataSource(videoFile.absolutePath)
-        val videoTrackIdx = findTrack(videoExtractor, "video/")
+        val videoTrackIdx: Int = findTrack(videoExtractor, "video/")
         videoExtractor.selectTrack(videoTrackIdx)
-        val videoFormat = videoExtractor.getTrackFormat(videoTrackIdx)
-        val muxerVideoTrack = muxer.addTrack(videoFormat)
+        val videoFormat: MediaFormat = videoExtractor.getTrackFormat(videoTrackIdx)
+        val muxerVideoTrack: Int = muxer.addTrack(videoFormat)
 
         // Add audio track — transcode to AAC if source is not AAC (e.g. MP3)
         val audioExtractor = MediaExtractor()
@@ -279,10 +279,10 @@ class ImageToVideoConverter(private val context: Context) {
         // Re-extract the transcoded AAC file
         val aacExtractor = MediaExtractor()
         aacExtractor.setDataSource(transcodedAacFile.absolutePath)
-        val aacTrackIdx = findTrack(aacExtractor, "audio/")
+        val aacTrackIdx: Int = findTrack(aacExtractor, "audio/")
         aacExtractor.selectTrack(aacTrackIdx)
-        val aacFormat = aacExtractor.getTrackFormat(aacTrackIdx)
-        val muxerAudioTrack = muxer.addTrack(aacFormat)
+        val aacFormat: MediaFormat = aacExtractor.getTrackFormat(aacTrackIdx)
+        val muxerAudioTrack: Int = muxer.addTrack(aacFormat)
 
         muxer.start()
 
@@ -318,7 +318,7 @@ class ImageToVideoConverter(private val context: Context) {
         audioExtractor: MediaExtractor,
         videoDurationUs: Long
     ) {
-        val muxerAudioTrack = muxer.addTrack(audioFormat)
+        val muxerAudioTrack: Int = muxer.addTrack(audioFormat)
         muxer.start()
 
         val buffer = ByteBuffer.allocate(1024 * 1024)
@@ -366,7 +366,7 @@ class ImageToVideoConverter(private val context: Context) {
         bufferInfo: MediaCodec.BufferInfo
     ) {
         while (true) {
-            val sampleSize = videoExtractor.readSampleData(buffer, 0)
+            val sampleSize: Int = videoExtractor.readSampleData(buffer, 0)
             if (sampleSize < 0) break
             bufferInfo.offset = 0
             bufferInfo.size = sampleSize
@@ -389,8 +389,9 @@ class ImageToVideoConverter(private val context: Context) {
         val encoderFormat: MediaFormat = MediaFormat.createAudioFormat(
             MediaFormat.MIMETYPE_AUDIO_AAC, sampleRate, channelCount
         ).apply {
-            setInteger(MediaFormat.KEY_BIT_RATE, 128_000)
+            setInteger(MediaFormat.KEY_BIT_RATE, 320_000)
             setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)
+            setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 1024 * 50)
         }
 
         val encoder: MediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC)
@@ -411,13 +412,13 @@ class ImageToVideoConverter(private val context: Context) {
         val bufferInfo = MediaCodec.BufferInfo()
         var inputDone = false
         var decoderDone = false
-        var encoderDone = false
+        var isEncoderDone = false
         val timeoutUs = 10_000L
 
-        while (!encoderDone) {
+        while (!isEncoderDone) {
             // Feed data to decoder
             if (!inputDone) {
-                val inputBufIdx = decoder.dequeueInputBuffer(timeoutUs)
+                val inputBufIdx: Int = decoder.dequeueInputBuffer(timeoutUs)
                 if (inputBufIdx >= 0) {
                     val inputBuf = decoder.getInputBuffer(inputBufIdx)!!
                     val sampleSize = extractor.readSampleData(inputBuf, 0)
@@ -500,7 +501,7 @@ class ImageToVideoConverter(private val context: Context) {
                     }
                     val isEndOfSync: Boolean = bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0
                     encoder.releaseOutputBuffer(encOutIdx, false)
-                    if (isEndOfSync) encoderDone = true
+                    if (isEndOfSync) isEncoderDone = true
                 }
             }
         }
